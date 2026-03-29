@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BV ParcelPing - Login</title>
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .login-card {
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .login-card:focus-within, .login-card:hover {
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.12);
+            transform: scale(1.03);
+        } 
+        @keyframes shake {
+            10%, 90% { transform: translateX(-1px); }
+            20%, 80% { transform: translateX(2px); }
+            30%, 50%, 70% { transform: translateX(-4px); }
+            40%, 60% { transform: translateX(4px); }
+        }
+        .animate-shake { animation: shake 0.4s; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md mx-auto">
+        <!-- Header with logo, title, and back to home -->
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <img src="{% static 'images/bvlogo.jpg' %}" alt="Banasthali Vidyapith Logo" class="w-12 h-12">
+                <span class="text-xl font-bold text-blue-800 tracking-tight">BV ParcelPing</span>
+            </div>
+            <button onclick="window.location.href='{% url 'homepage' %}'" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-blue-100 hover:text-blue-700 transition">Back to Home</button>
+        </div>
+        <div class="login-card bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center">
+            <h2 class="text-2xl font-bold text-blue-700 mb-1">Secure Login</h2>
+            <span class="text-sm text-gray-500 mb-4">Secure Login for BV ParcelPing</span>
+            <!-- Role Selector Tabs -->
+            <script>
+
+                function selectRole(role){
+                    document.getElementById("userType").value = role;
+                    // Also update active tab styling
+                    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector(`[data-role="${role}"]`).classList.add('active');
+                }
+                
+            </script>
+            <div class="w-full flex justify-center mb-6">
+                <div id="roleTabs" class="flex rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                    <button type="button" class="role-tab px-4 py-2 text-gray-700 font-semibold hover:bg-blue-100 border-r border-gray-200 focus:outline-none" 
+                        data-role="student" onclick="selectRole('student')">Student</button>
+                    <button type="button" class="role-tab px-4 py-2 text-gray-700 font-semibold hover:bg-green-100 border-r border-gray-200 focus:outline-none" 
+                        data-role="kutir" onclick="selectRole('kutir')">Kutir</button>
+                    <button type="button" class="role-tab px-4 py-2 text-gray-700 font-semibold hover:bg-yellow-100 border-r border-gray-200 focus:outline-none" 
+                        data-role="postoffice" onclick="selectRole('postoffice')">Post Office</button>
+                </div>
+            </div>
+            <!-- Login Form -->
+            <form id="loginForm" class="w-full space-y-5 mt-2" method="POST" action="/login/">
+                {% csrf_token %}
+                <input type="hidden" id="userType" name="userType" value="student">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1"><b>Banasthali Email</b></label>
+                    <input id="username" name="username" type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-shadow" placeholder="Enter your email or username" required>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1"><b>Password</b></label>
+                    <input id="password" name="password" type="password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition-shadow" placeholder="Enter your password" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <a href="{% url 'forget_password' %}" class="text-blue-600 text-sm hover:underline">Forgot Password?</a>
+                </div>
+                <div class="flex gap-3 mt-2">
+                    <button type="submit" class="flex-1 py-3 rounded-lg bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 transition-transform duration-200 transform hover:scale-105 shadow focus:outline-none">Login</button>
+                    <button type="button" onclick="window.location.href='{% url 'homepage' %}'" class="flex-1 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold text-lg hover:bg-gray-300 transition">Cancel</button>
+                </div>
+            </form>
+            <div id="loginError" class="hidden mt-4 text-red-600 font-medium animate-shake"></div>
+        </div>
+    </div>
+    <script>
+        // Styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+        .role-tab.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+        .role-tab { transition: background 0.2s, color 0.2s; }
+        input:focus { box-shadow: 0 0 0 2px #2563eb33; }
+        .login-card {
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.12);
+        }
+        body { background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%); }
+        @keyframes shake {
+            10%, 90% { transform: translateX(-1px); }
+            20%, 80% { transform: translateX(2px); }
+            30%, 50%, 70% { transform: translateX(-4px); }
+            40%, 60% { transform: translateX(4px); }
+        }
+        .animate-shake { animation: shake 0.4s; }
+        `;
+        document.head.appendChild(style);
+    
+        // Role tab selector
+        const roleTabs = document.querySelectorAll('.role-tab');
+        const userTypeInput = document.getElementById('userType');
+    
+        roleTabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                roleTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                userTypeInput.value = this.getAttribute('data-role');
+            });
+        });
+    
+        // Set default active tab
+        roleTabs[0].classList.add('active');
+    
+        // Client-side validation ONLY — no fake login, just checks before submitting to Django
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('loginError');
+    
+            errorDiv.classList.add('hidden');
+            errorDiv.textContent = '';
+    
+            if (!username || !password) {
+                e.preventDefault();
+                showError('Please enter both email and password.');
+                return;
+            }
+    
+            if (!username.toLowerCase().endsWith('@banasthali.in')) {
+                e.preventDefault();
+                showError('Please enter a valid Banasthali email ending with @banasthali.in');
+                return;
+            }
+    
+            // ✅ If validation passes, form submits normally to Django
+        });
+    
+        function showError(msg) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = msg;
+            errorDiv.classList.remove('hidden');
+            errorDiv.classList.add('animate-shake');
+            setTimeout(() => errorDiv.classList.remove('animate-shake'), 500);
+        }
+    
+        // Show Django error if present
+        {% if error %}
+            document.addEventListener('DOMContentLoaded', function() {
+                showError("{{ error }}");
+            });
+        {% endif %}
+    </script>
+</body>
+</html>

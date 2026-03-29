@@ -1,0 +1,40 @@
+from django.contrib import admin
+from django.urls import path
+from home import views 
+
+urlpatterns = [
+    #path('', admin.site.urls),                           
+    path('login/', views.login_view, name='login'),           
+    path('logout/', views.logout_view, name='logout'),        
+    path('forget_password/', views.forget_password, name='forget_password'),
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+    path('faq/', views.faq, name='faq'),
+    path('feedback/', views.feedback, name='feedback'),
+    path('', views.homepage, name='homepage'),
+    path('index/', views.index, name='index'),
+    path('kutir_info/', views.kutir_info, name='kutir_info'),
+    path('notifications/', views.notifications, name='notifications'),
+    path('student_notifications/', views.student_notifications, name='student_notifications'),
+    path('notificationspo/', views.notificationspo, name='notificationspo'),
+    path('postoffice_info/', views.postoffice_info, name='postoffice_info'),
+    path('signup/', views.signup, name='signup'),
+    path('student_info/', views.student_info, name='student_info'),
+    path('studentdashboard/', views.studentdashboard, name='studentdashboard'),
+    path('supervisor/', views.supervisor, name='supervisor'),
+    path('supervisorpo/', views.supervisorpo, name='supervisorpo'),
+    path('track_parcel/', views.track_parcel, name='track_parcel'),
+    path('api/feedback/submit/', views.submit_feedback, name='submit_feedback'),
+    path('api/feedback/list/', views.get_user_feedbacks, name='list_feedback'),
+    path('api/send-otp/', views.send_otp, name='send_otp'),
+    path('api/verify-otp/', views.verify_otp, name='verify_otp'),
+    path('api/reset-password/', views.reset_password, name='reset_password'),
+    path('api/student/stats/', views.get_student_parcel_stats, name='student_stats'),
+    path('api/student/parcels/', views.get_student_parcels, name='student_parcels'),
+    path('api/supervisorpo/stats/', views.get_supervisorpo_stats, name='supervisorpo_stats'),
+    path('api/supervisor/stats/', views.get_supervisor_stats, name='supervisor_stats'),
+    path('api/student/notifications/', views.get_student_notifications, name='student_notifications_api'),
+    path('api/student/unread-count/', views.get_unread_count, name='unread_count'),
+    path('api/supervisor/notifications/', views.get_supervisor_notifications, name='supervisor_notifications_api'),
+    path('api/supervisor/unread-count/', views.get_supervisor_unread_count, name='supervisor_unread_count')
+]

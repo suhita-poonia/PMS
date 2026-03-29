@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About BV ParcelPing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Interß', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-50 to-white flex items-center justify-center">
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-center text-purple-700 mb-6">About BV ParcelPing</h1>
+        <div class="text-gray-700 text-lg leading-relaxed">
+            <p class="mb-4">
+                BV ParcelPing is a centralized digital parcel management system designed specifically for the residential campus of Banasthali Vidyapith. The platform aims to simplify, organize, and modernize the process of handling parcels received by students through the Post Office and Kutir. By integrating barcode scanning, real-time notifications, and centralized tracking, BV ParcelPing ensures timely communication and efficient parcel delivery across the campus.
+
+<h3><b>Why BV ParcelPing Was Created?</b></h3>
+
+In a large residential university like Banasthali Vidyapith, students frequently receive parcels from home and online shopping platforms. Traditionally, students had to repeatedly visit the Post Office or Kutir to check parcel status, leading to long queues, miscommunication, and delays. BV ParcelPing was developed to eliminate these issues by providing instant updates, transparent tracking, and organized parcel handling, saving time for both students and staff.
+<br><br>
+<h3><b>
+    How the System Works?
+</b></h3>
+
+When a parcel arrives at the Post Office or Kutir, staff members scan the barcode using the BV ParcelPing system. The scanned information is stored in a centralized database, and an automated notification is immediately sent to the respective student. As the parcel moves through different stages such as Received, Out for Delivery, and Delivered to Hostel, the system continuously updates the parcel status and notifies the student in real time.
+<br>
+<br>
+<h3><b>
+    Key Features
+</b></h3>
+
+1. Centralized parcel tracking for the entire campus. <br>
+
+2. Real-time notifications for students. <br>
+
+3. Separate handling of Post Office and Kutir parcels. <br>
+4. Barcode-based parcel identification. <br>
+5. Secure login system for students and staff. <br>
+
+6. Status updates from arrival to final delivery. <br>
+
+7. Reduced manual effort and paperwork. <br>
+<br>
+<h3><b>Who Can Use BV ParcelPing?</b></h3>
+
+BV ParcelPing is designed for multiple users within the campus ecosystem:
+
+1. Students, who receive notifications and track parcel status. <br>
+
+2. Post Office staff, who manage postal deliveries. <br>
+
+3. Kutir staff, who handle e-commerce parcels. <br>
+
+4. Delivery staff, who distribute parcels to hostels. <br>
+
+5. System administrators, who oversee operations and data integrity. <br>
+
+6. Each user role has controlled access to ensure security and accuracy. <br>
+<br>
+<h3><b>Technology & Design Approach</b></h3>
+
+The system is designed with a user-friendly interface to accommodate users with varying levels of technical expertise. A responsive web design ensures accessibility from desktops, tablets, and mobile devices. Emphasis is placed on data security, system reliability, and ease of use, making the platform efficient and dependable for daily operations.
+
+<br><br>
+<h3><b>Our Vision</b></h3>
+
+The vision of BV ParcelPing is to create a smart, transparent, and stress-free parcel management experience for every student at Banasthali Vidyapith. By leveraging technology, the system aims to improve operational efficiency, enhance communication, and contribute to the university’s journey toward digital transformation.</p>
+        </div>
+        <div class="text-center mt-8">
+            <a href="{% url 'homepage' %}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,584 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kutir Supervisor Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .dashboard-card { transition: box-shadow 0.2s, transform 0.2s; }
+        .dashboard-card:hover { box-shadow: 0 8px 32px 0 rgba(0,0,0,0.12); transform: scale(1.03); }
+        .tab-btn.active { background: #047857; color: #fff; }
+        .tab-btn { transition: background 0.2s, color 0.2s; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-green-100 to-yellow-100">
+
+    <!-- Django context passed to JS -->
+    <script>
+        const SUPERVISOR_DATA = {
+            name: "{{ supervisor.supervisor_name|default:'Supervisor'|escapejs }}",
+            email: "{{ supervisor.supervisor_email|default:''|escapejs }}",
+            supervisorId: "{{ supervisor.supervisor_id|default:''|escapejs }}",
+            location: "{{ supervisor.supervisor_location|default:''|escapejs }}",
+        };
+        const LOGOUT_URL = "{% url 'logout' %}";
+        const STATS_URL = "{% url 'supervisor_stats' %}";
+        const SUPERVISOR_URL = "{% url 'supervisor' %}";
+        const CSRF_TOKEN = "{{ csrf_token }}";
+    </script>
+
+    {% if messages %}
+    <div id="successMessage"
+        class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        {% for message in messages %}{{ message }}{% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Header -->
+    <header class="bg-white shadow-md mb-6">
+        <div class="max-w-4xl mx-auto px-4 flex justify-between items-center h-16">
+            <div class="flex items-center">
+                <img src="{% static 'images/bvlogo.jpg' %}" alt="Logo" class="w-10 h-10">
+                <span class="ml-3 text-xl font-bold text-green-800">Kutir</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Notification Bell -->
+                <button class="relative" title="Notifications" onclick="window.location.href='{% url 'notifications' %}'">
+                    <svg class="w-7 h-7 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                </button>
+
+                <!-- Avatar with dropdown -->
+                <div class="relative">
+                    <div id="avatar"
+                        class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg cursor-pointer shadow-lg hover:shadow-xl transition-shadow select-none">
+                        {{ supervisor.supervisor_name|first|upper|default:"S" }}
+                    </div>
+                    <div id="dropdown"
+                        class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-10 opacity-0 invisible transition-all duration-200 border border-gray-200">
+                        <!-- Dropdown header -->
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                                    {{ supervisor.supervisor_name|first|upper|default:"S" }}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900">{{ supervisor.supervisor_name|default:"Supervisor" }}</p>
+                                    <p class="text-xs text-gray-500">{{ supervisor.supervisor_email|default:"" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Profile button -->
+                        <div class="py-1">
+                            <button onclick="showProfileModal()"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-green-600 transition-colors">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                View Profile
+                            </button>
+                        </div>
+                        <!-- Logout -->
+                        <div class="py-1 border-t border-gray-200">
+                            <button onclick="logout()"
+                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Supervisor Profile</h3>
+                </div>
+                <div class="px-6 py-4">
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
+                            {{ supervisor.supervisor_name|first|upper|default:"S" }}
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-900">{{ supervisor.supervisor_name|default:"Supervisor" }}</h4>
+                            <p class="text-sm text-gray-500">ID: {{ supervisor.supervisor_id|default:"—" }}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <p class="text-sm text-gray-900">{{ supervisor.supervisor_email|default:"—" }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Role</label>
+                            <p class="text-sm text-gray-900">Kutir Supervisor</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Location</label>
+                            <p class="text-sm text-gray-900">{{ supervisor.supervisor_location|default:"—" }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+                    <button onclick="document.getElementById('profileModal').classList.add('hidden')"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4">
+
+        <!-- Stats Row 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="dashboard-card bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-full">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Total Parcels</h3>
+                        <p class="text-2xl font-bold text-green-600" id="totalParcels">—</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
+                <div class="flex items-center">
+                    <div class="p-3 bg-yellow-100 rounded-full">
+                        <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Pending Delivery</h3>
+                        <p class="text-2xl font-bold text-yellow-600" id="pendingParcels">—</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-full">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Delivered Today</h3>
+                        <p class="text-2xl font-bold text-blue-600" id="deliveredToday">—</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Row 2 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-indigo-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Success Rate</p>
+                        <p class="text-xl font-bold text-indigo-600" id="successRate">—</p>
+                    </div>
+                    <div class="p-2 bg-indigo-100 rounded-full">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-pink-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Active Students</p>
+                        <p class="text-xl font-bold text-pink-600" id="activeStudents">—</p>
+                    </div>
+                    <div class="p-2 bg-pink-100 rounded-full">
+                        <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-teal-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Hostels Served</p>
+                        <p class="text-xl font-bold text-teal-600" id="hostelsServed">—</p>
+                    </div>
+                    <div class="p-2 bg-teal-100 rounded-full">
+                        <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-green-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Location</p>
+                        <p class="text-xl font-bold text-green-700 truncate">{{ supervisor.supervisor_location|default:"—" }}</p>
+                    </div>
+                    <div class="p-2 bg-green-100 rounded-full">
+                        <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-start gap-4 mb-8">
+            <button class="tab-btn px-6 py-2 rounded-lg font-semibold bg-green-100 text-green-700 active" id="tab-add"
+                onclick="showTab('add')">Add Parcel</button>
+            <button class="tab-btn px-6 py-2 rounded-lg font-semibold bg-green-100 text-green-700" id="tab-update"
+                onclick="showTab('update')">Update Parcel Status</button>
+        </div>
+
+        <div id="tab-content" class="bg-white rounded-xl shadow-xl p-8 mb-8"></div>
+    </main>
+
+    <script>
+        // ── Avatar dropdown ──────────────────────────────────────────
+        document.getElementById('avatar').addEventListener('click', function (e) {
+            e.stopPropagation();
+            const dd = document.getElementById('dropdown');
+            dd.classList.toggle('opacity-0');
+            dd.classList.toggle('invisible');
+        });
+        document.addEventListener('click', function () {
+            document.getElementById('dropdown').classList.add('opacity-0', 'invisible');
+        });
+
+        // ── Logout ───────────────────────────────────────────────────
+        function logout() {
+            window.location.href = LOGOUT_URL;
+        }
+
+        // ── Profile modal ────────────────────────────────────────────
+        function showProfileModal() {
+            document.getElementById('dropdown').classList.add('opacity-0', 'invisible');
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        // ── Load stats ───────────────────────────────────────────────
+        function loadStats() {
+            fetch(STATS_URL)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('totalParcels').textContent   = data.total ?? '0';
+                    document.getElementById('pendingParcels').textContent  = data.pending ?? '0';
+                    document.getElementById('deliveredToday').textContent  = data.delivered_today ?? '0';
+                    document.getElementById('successRate').textContent     = (data.success_rate ?? '0') + '%';
+                    document.getElementById('activeStudents').textContent  = data.active_students ?? '0';
+                    document.getElementById('hostelsServed').textContent   = data.hostels_served ?? '0';
+                })
+                .catch(() => {
+                    ['totalParcels','pendingParcels','deliveredToday','successRate','activeStudents','hostelsServed']
+                        .forEach(id => document.getElementById(id).textContent = '0');
+                });
+        }
+
+        // ── Tab switching ────────────────────────────────────────────
+        function showTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            const content = document.getElementById('tab-content');
+
+            if (tab === 'add') {
+                content.innerHTML = `
+                    <h2 class="text-xl font-bold mb-4 text-green-700">Add Parcel</h2>
+                    <form id="addParcelForm" class="space-y-4" method="POST" action="${SUPERVISOR_URL}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <input type="hidden" name="action" value="add">
+                        <div>
+                            <label class="block font-medium mb-1">Order ID</label>
+                            <input type="text" name="order_id" id="orderId"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                placeholder="Enter Order ID">
+                            <span id="orderIdError" class="text-red-500 text-sm"></span>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Student Name</label>
+                            <input type="text" id="studentName" name="student_name"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                placeholder="Auto-filled or enter manually">
+                            <span id="studentNameError" class="text-red-500 text-sm"></span>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Hostel Name</label>
+                            <select name="hostel" id="hostelName"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                onchange="fetchStudent()">
+                                <option value="">Select Hostel</option>
+                                <option>Shri Shanta Aagar</option><option>Shri Shanta Ajiram</option>
+                                <option>Shri Shanta Alaya</option><option>Shri Shanta Ayanam</option>
+                                <option>Shri Shanta Ayatan</option><option>Shri Shanta Bai Shiksha Kutir</option>
+                                <option>Shri Shanta Bhuwnam</option><option>Shri Shanta Dham</option>
+                                <option>Shri Shanta Gangotri</option><option>Shri Shanta Geham</option>
+                                <option>Shri Shanta Gram</option><option>Shri Shanta Kulam</option>
+                                <option>Shri Shanta Lok</option><option>Shri Shanta Nagram</option>
+                                <option>Shri Shanta Neri</option><option>Shri Shanta Nigam</option>
+                                <option>Shri Shanta Niketan</option><option>Shri Shanta Nikunj</option>
+                                <option>Shri Shanta Nilaya</option><option>Shri Shanta Niveshanam</option>
+                                <option>Shri Shanta Niwas</option><option>Shri Shanta Nishantam</option>
+                                <option>Shri Shanta Paleyam</option><option>Shri Shanta Pattnam</option>
+                                <option>Shri Shanta Peetham</option><option>Shri Shanta Puram</option>
+                                <option>Shri Shanta Puri</option><option>Shri Shanta Sharnam</option>
+                                <option>Shri Shanta Soudh</option><option>Shri Shanta Teertham</option>
+                                <option>Shri Shanta Uthjam</option><option>Shri Shanta Vasam</option>
+                                <option>Shri Shanta Vasti</option><option>Shri Shanta Vatika</option>
+                                <option>Shri Shanta Vihar</option><option>Shri Shanta Vishwa Needam</option>
+                            </select>
+                            <span id="hostelNameError" class="text-red-500 text-sm"></span>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Student Room No.</label>
+                            <input type="text" id="studentRoomNo" name="room_no" onblur="fetchStudent()"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                placeholder="Enter student's room no.">
+                            <span id="studentRoomNoError" class="text-red-500 text-sm"></span>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Date</label>
+                            <input type="date" name="arrival_date" id="parcelDate"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400">
+                            <span id="parcelDateError" class="text-red-500 text-sm"></span>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Student Mobile Number</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">+91</span>
+                                <input type="tel" name="student_mobile" id="studentMobile"
+                                    class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                    placeholder="XXXXXXXXXX">
+                            </div>
+                            <span id="studentMobileError" class="text-red-500 text-sm"></span>
+                        </div>
+                        <button type="button" onclick="submitAddParcel()"
+                            class="w-full px-6 py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition">
+                            Add Parcel
+                        </button>
+                    </form>
+                    <div id="addParcelResult" class="mt-4"></div>`;
+
+            } else if (tab === 'update') {
+                content.innerHTML = `
+                    <h2 class="text-xl font-bold mb-4 text-green-700">Update Parcel Status</h2>
+                    <form id="updateParcelForm" class="space-y-4" method="POST" action="${SUPERVISOR_URL}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <input type="hidden" name="action" value="update">
+            
+                        <div>
+                            <label class="block font-medium mb-1">Order ID</label>
+                            <div class="flex gap-2">
+                                <input type="text" name="order_id" id="updateOrderId"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                    placeholder="Enter Order ID">
+                                <button type="button" onclick="fetchParcelDetails()"
+                                    class="px-4 py-3 bg-green-100 text-green-700 font-semibold rounded-lg hover:bg-green-200 transition whitespace-nowrap">
+                                    Search
+                                </button>
+                            </div>
+                            <span id="updateOrderIdError" class="text-red-500 text-sm"></span>
+                        </div>
+            
+                        <!-- Parcel details card — hidden until found -->
+                        <div id="parcelDetailsCard" class="hidden bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
+                            <p class="text-sm font-semibold text-gray-700 mb-2">📦 Parcel Details</p>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div><span class="text-gray-500">Student:</span> <span id="pd_name" class="font-medium text-gray-800"></span></div>
+                                <div><span class="text-gray-500">Hostel:</span> <span id="pd_hostel" class="font-medium text-gray-800"></span></div>
+                                <div><span class="text-gray-500">Room:</span> <span id="pd_room" class="font-medium text-gray-800"></span></div>
+                                <div><span class="text-gray-500">Arrival:</span> <span id="pd_date" class="font-medium text-gray-800"></span></div>
+                                <div class="col-span-2">
+                                    <span class="text-gray-500">Current Status:</span>
+                                    <span id="pd_status" class="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800"></span>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Not found message -->
+                        <div id="parcelNotFound" class="hidden bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm">
+                            ❌ No parcel found with this Order ID.
+                        </div>
+            
+                        <div id="statusSection" class="hidden">
+                            <label class="block font-medium mb-1">New Status</label>
+                            <select name="status" id="newStatus"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400">
+                                <option value="">Select Status</option>
+                                <option value="Received">Received</option>
+                                <option value="Out for Delivery">Out for Delivery</option>
+                                <option value="Picked Up">Picked Up</option>
+                            </select>
+                            <span id="newStatusError" class="text-red-500 text-sm"></span>
+                        </div>
+            
+                        <button type="button" id="updateBtn" onclick="submitUpdateParcel()"
+                            class="hidden w-full px-6 py-3 rounded-lg bg-yellow-600 text-white font-semibold hover:bg-yellow-700 transition">
+                            Update Status
+                        </button>
+                    </form>
+                    <div id="updateParcelResult" class="mt-4"></div>`;
+            }
+        }
+
+        // ── Add Parcel validation + submit ────────────────────────────
+        function submitAddParcel() {
+            let valid = true;
+
+            const orderId = document.getElementById('orderId').value.trim();
+            const hostel  = document.getElementById('hostelName').value.trim();
+            const room    = document.getElementById('studentRoomNo').value.trim();
+            const date    = document.getElementById('parcelDate').value;
+            const mobile  = document.getElementById('studentMobile').value.trim();
+
+            ['orderIdError','hostelNameError','studentRoomNoError','parcelDateError','studentMobileError']
+                .forEach(id => document.getElementById(id).textContent = '');
+
+            if (!orderId) {
+                document.getElementById('orderIdError').textContent = 'Order ID is required.';
+                valid = false;
+            }
+            if (!hostel) {
+                document.getElementById('hostelNameError').textContent = 'Please select a hostel.';
+                valid = false;
+            }
+            if (!room) {
+                document.getElementById('studentRoomNoError').textContent = 'Room number is required.';
+                valid = false;
+            }
+            if (!date) {
+                document.getElementById('parcelDateError').textContent = 'Date is required.';
+                valid = false;
+            } else {
+                const today = new Date().toISOString().split('T')[0];
+                if (date > today) {
+                    document.getElementById('parcelDateError').textContent = 'Date cannot be in the future.';
+                    valid = false;
+                }
+            }
+            if (!mobile) {
+                document.getElementById('studentMobileError').textContent = 'Mobile number is required.';
+                valid = false;
+            } else if (!/^[0-9]{10}$/.test(mobile)) {
+                document.getElementById('studentMobileError').textContent = 'Enter a valid 10-digit mobile number.';
+                valid = false;
+            }
+
+            if (valid) document.getElementById('addParcelForm').submit();
+        }
+
+        // ── Update Parcel validation + submit ─────────────────────────
+        function submitUpdateParcel() {
+            let valid = true;
+
+            const orderId = document.getElementById('updateOrderId').value.trim();
+            const status  = document.getElementById('newStatus').value;
+
+            ['updateOrderIdError','newStatusError'].forEach(id => document.getElementById(id).textContent = '');
+
+            if (!orderId) {
+                document.getElementById('updateOrderIdError').textContent = 'Order ID is required.';
+                valid = false;
+            }
+            if (!status) {
+                document.getElementById('newStatusError').textContent = 'Please select a status.';
+                valid = false;
+            }
+
+            if (valid) document.getElementById('updateParcelForm').submit();
+        }
+
+        // ── Auto-fill student details ─────────────────────────────────
+        function fetchStudent() {
+            const hostel = document.getElementById('hostelName') ? document.getElementById('hostelName').value : '';
+            const room   = document.getElementById('studentRoomNo') ? document.getElementById('studentRoomNo').value : '';
+            if (hostel && room) {
+                fetch(`/get-student/?hostel=${encodeURIComponent(hostel)}&room_no=${encodeURIComponent(room)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.error) {
+                            document.getElementById('studentName').value  = data.name   || '';
+                            document.getElementById('studentMobile').value = data.mobile || '';
+                        }
+                    })
+                    .catch(() => {});
+            }
+        }
+
+        // ── Auto-dismiss flash messages ───────────────────────────────
+        setTimeout(() => {
+            const msg = document.getElementById('successMessage');
+            if (msg) msg.style.display = 'none';
+        }, 3000);
+
+        // ── Init ─────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            loadStats();
+            showTab('add');
+        });
+
+        function fetchParcelDetails() {
+            const orderId = document.getElementById('updateOrderId').value.trim();
+            document.getElementById('updateOrderIdError').textContent = '';
+            document.getElementById('parcelDetailsCard').classList.add('hidden');
+            document.getElementById('parcelNotFound').classList.add('hidden');
+            document.getElementById('statusSection').classList.add('hidden');
+            document.getElementById('updateBtn').classList.add('hidden');
+        
+            if (!orderId) {
+                document.getElementById('updateOrderIdError').textContent = 'Please enter an Order ID.';
+                return;
+            }
+        
+            fetch(`/track_parcel/?order_id=${encodeURIComponent(orderId)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.found) {
+                        document.getElementById('pd_name').textContent   = data.student_name || '—';
+                        document.getElementById('pd_hostel').textContent = data.hostel || '—';
+                        document.getElementById('pd_room').textContent   = data.room_no || '—';
+                        document.getElementById('pd_date').textContent   = data.arrival_date || '—';
+                        document.getElementById('pd_status').textContent = data.status || '—';
+                        document.getElementById('parcelDetailsCard').classList.remove('hidden');
+                        document.getElementById('statusSection').classList.remove('hidden');
+                        document.getElementById('updateBtn').classList.remove('hidden');
+                    } else {
+                        document.getElementById('parcelNotFound').classList.remove('hidden');
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('updateOrderIdError').textContent = 'Error fetching parcel. Try again.';
+                });
+        }
+    </script>
+</body>
+</html>

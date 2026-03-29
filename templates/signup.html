@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sign Up - BV ParcelPing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+    
+    <h2 class="text-2xl font-semibold text-center text-blue-700 mb-4">
+      Create an Account
+    </h2>
+
+    {% if messages %}
+      {% for message in messages %}
+          <p>{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form id="signupForm" class="space-y-4" method="POST" action="{% url 'signup' %}">
+      {% csrf_token %}
+
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Banasthali Email</label>
+        <input name="email" id="email" type="email"
+          class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300"
+          placeholder="you@banasthali.in" required>
+        <div id="emailError" class="text-red-500 text-xs mt-1"></div>
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input name="password" id="password" type="password"
+          class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300" required>
+        <div id="passwordError" class="text-red-500 text-xs mt-1"></div>
+
+
+        <!-- Password Rules Display -->
+        <div class="text-xs mt-2 space-y-1">
+          <p id="lengthRule" class="text-gray-500">• Minimum 8 characters</p>
+          <p id="upperRule" class="text-gray-500">• At least 1 uppercase letter</p>
+          <p id="lowerRule" class="text-gray-500">• At least 1 lowercase letter</p>
+          <p id="numberRule" class="text-gray-500">• At least 1 number</p>
+          <p id="specialRule" class="text-gray-500">• At least 1 special character (@$!%*?&)</p>
+          <p id="spaceRule" class="text-gray-500">• No spaces allowed</p>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
+        <input name="confirm_password" id="confirmPassword" type="password"
+          class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300">
+        <div id="confirmPasswordError" class="text-red-500 text-xs mt-1"></div>
+      </div>
+
+      <label>Select Role</label>
+
+        <select name="role">
+          <option value="student">Student</option>
+          <option value="supervisor">Supervisor</option>
+        </select><br><br>
+
+      <div id="signupMessage" class="text-sm text-center"></div>
+
+      <div class="flex gap-3">
+        <button type="submit" id="submitBtn"
+          class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
+          Create account
+        </button>
+
+        <a href="{% url 'index' %}"
+          class="flex-1 text-center px-4 py-2 border rounded-lg text-blue-700 bg-white hover:bg-blue-50">
+          Back to login
+        </a>
+      </div>
+
+    </form>
+  </div>
+
+<script>
+
+function clearErrors() {
+  document.getElementById('emailError').textContent = '';
+  document.getElementById('passwordError').textContent = '';
+  document.getElementById('confirmPasswordError').textContent = '';
+  document.getElementById('signupMessage').textContent = '';
+}
+
+// Email Validation
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@banasthali\.in$/;
+  return emailRegex.test(email);
+}
+
+// Password Validation
+function validatePassword(password) {
+  const rules = {
+    length: password.length >= 8,
+    upper: /[A-Z]/.test(password),
+    lower: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[@$!%*?&]/.test(password),
+    space: !/\s/.test(password)
+  };
+
+  document.getElementById('lengthRule').className = rules.length ? "text-green-600" : "text-gray-500";
+  document.getElementById('upperRule').className = rules.upper ? "text-green-600" : "text-gray-500";
+  document.getElementById('lowerRule').className = rules.lower ? "text-green-600" : "text-gray-500";
+  document.getElementById('numberRule').className = rules.number ? "text-green-600" : "text-gray-500";
+  document.getElementById('specialRule').className = rules.special ? "text-green-600" : "text-gray-500";
+  document.getElementById('spaceRule').className = rules.space ? "text-green-600" : "text-gray-500";
+
+  return Object.values(rules).every(Boolean);
+}
+
+// Live password validation
+document.getElementById('password').addEventListener('input', function() {
+  validatePassword(this.value);
+});
+
+// Submit button
+document.getElementById('submitBtn').addEventListener('click', function() {
+  clearErrors();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  let isValid = true;
+
+  if (!email) {
+    document.getElementById('emailError').textContent = "Email is required.";
+    isValid = false;
+  } else if (!validateEmail(email)) {
+    document.getElementById('emailError').textContent = "Email must be a valid @banasthali.in address.";
+    isValid = false;
+  }
+
+  if (!validatePassword(password)) {
+    document.getElementById('passwordError').textContent = "Please meet all password requirements.";
+    isValid = false;
+  }
+
+  if (password !== confirmPassword) {
+    document.getElementById('confirmPasswordError').textContent = "Passwords do not match.";
+    isValid = false;
+  }
+
+  if (isValid) {
+    const msg = document.getElementById('signupMessage');
+    msg.textContent = "Account created successfully — redirecting to login...";
+    msg.className = "text-sm text-green-600";
+
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 1500);
+  }
+});
+
+</script>
+
+</body>
+</html>

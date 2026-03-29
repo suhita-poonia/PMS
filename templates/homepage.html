@@ -1,0 +1,330 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BV ParcelPing - Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            background-image: url({% static 'images/background.jpg' %});
+            background-repeat: no-repeat;
+            background-size: cover;
+            
+        }
+        .dashboard-container {
+            min-height: calc(100vh - 8rem);
+        }
+        .dashboard-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+        .dashboard-button:hover {
+            transform: scale(1.05);
+        }
+        .dashboard-button-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 1rem;
+        }
+        /* Role card styles (reference: provided screenshot) */
+        .role-grid { display:grid; grid-template-columns: repeat(4, minmax(160px,1fr)); gap:1rem; max-width:1000px; margin:1.25rem auto 0; }
+        .role-card { background: linear-gradient(180deg,#ffffff,#f8fbff); border-radius:16px; padding:1.25rem; box-shadow: 0 8px 24px rgba(15,23,42,0.06); cursor:pointer; border:1px solid rgba(15,23,42,0.03); display:flex; flex-direction:column; gap:.6rem; align-items:flex-start; transition:transform .18s ease, box-shadow .18s ease; }
+        .role-card:hover{ transform:translateY(-6px); box-shadow: 0 18px 40px rgba(15,23,42,0.09); }
+        .role-card .icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; background:rgba(59,130,246,0.06); color:#2563eb }
+        .role-card h4 { margin:0; font-weight:700; color:#0f172a }
+        .role-card p { margin:0; color:#475569; font-size:.92rem }
+        @media (max-width:900px){ .role-grid{grid-template-columns:repeat(2,1fr)} }
+        @media (max-width:480px){ .role-grid{grid-template-columns:repeat(1,1fr)} }
+    </style>
+</head>
+<body class="bg-gray-100"> 
+
+    <!-- Main Header -->
+<header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center">
+                <img class="w-12 h-12" src="{% static 'images/bvlogo.jpg' %}" alt="Banasthali Vidyapith Logo">
+                <span class="ml-4 text-xl font-semibold text-gray-900">BV ParcelPing</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='{% url 'index' %}'"
+                class="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m0 0l4-4m-4 4l4 4m6 4h5a2 2 0 002-2V6a2 2 0 00-2-2h-5"/>
+                </svg>
+                Login
+                </button>
+                <button onclick="window.location.href='{% url 'signup' %}'" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Sign up
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Quick Links Sub-Header -->
+<nav class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-center items-center h-12 gap-4 flex-wrap">
+            <a href="{% url 'student_info' %}"
+                class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-sm font-medium bg-white/10 hover:bg-white/25 border border-white/20 transition-all duration-200 hover:scale-105">
+                🎓 Student
+            </a>
+            <a href="{% url 'kutir_info' %}"
+                class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-sm font-medium bg-white/10 hover:bg-white/25 border border-white/20 transition-all duration-200 hover:scale-105">
+                🏠 Kutir
+            </a>
+            <a href="{% url 'postoffice_info' %}"
+                class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-sm font-medium bg-white/10 hover:bg-white/25 border border-white/20 transition-all duration-200 hover:scale-105">
+                📮 Post Office
+            </a>
+            <span class="text-white/30 text-lg select-none">|</span>
+            <a href="{% url 'about' %}"
+                class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-sm font-medium bg-white/10 hover:bg-white/25 border border-white/20 transition-all duration-200 hover:scale-105">
+                ℹ️ About
+            </a>
+            <a href="{% url 'faq' %}"
+                class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-sm font-medium bg-white/10 hover:bg-white/25 border border-white/20 transition-all duration-200 hover:scale-105">
+                ❓ FAQ
+            </a>
+            <a href="{% url 'contact' %}"
+                class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-sm font-medium bg-white/10 hover:bg-white/25 border border-white/20 transition-all duration-200 hover:scale-105">
+                📞 Contact Us
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div style="height: 50px;"></div>
+<div style="height: 1px; width: 100%;"></div>
+    
+    <!-- Main Dashboard Content -->
+    <main class="dashboard-container max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div id="dashboard-content" class="bg-white shadow-xl rounded-lg p-8">
+            <section class="text-center">
+                <h1 class="text-2xl font-extrabold text-blue-700 mb-2">Welcome to the BV ParcelPing</h1>
+                <p class="text-gray-600 max-w-2xl mx-auto mb-6">BV ParcelPing parcel management system which helps Banasthali Vidyapith students and staff manage parcel deliveries on campus. Track shipments, receive notifications, and coordinate pickups between Kutir and the Post Office.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto mb-6">
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-semibold text-gray-800">Track Parcels</h3>
+                        <p class="text-sm text-gray-600">Search by parcel or student ID and view delivery status in real time.</p>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-semibold text-gray-800">Notifications</h3>
+                        <p class="text-sm text-gray-600">Get notified when parcels arrive and are ready for pickup.</p>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-semibold text-gray-800">Secure Access</h3>
+                        <p class="text-sm text-gray-600">Role-based access for students, Kutir supervisors, Post Office supervisors, and admins.</p>
+                    </div>
+
+                    
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-semibold text-gray-800">Support</h3>
+                        <p class="text-sm text-gray-600">For help contact helpdesk@banasthali.in or visit the Kutir office on campus.</p>
+                    </div>
+                </div>
+
+                <!-- Role selection cards (styled like reference) -->
+                <div class="role-grid" role="list">
+                    <div class="role-card" data-role="student" role="listitem">
+                        <div class="icon">🎓</div>
+                        <h4>Student</h4>
+                        <p>Track your parcels, receive pickup alerts and view parcel history.</p>
+                    </div>
+                    <div class="role-card" data-role="kutir" role="listitem">
+                        <div class="icon" style="background:rgba(16,185,129,0.06);color:#10b981">🏠</div>
+                        <h4>Kutir Supervisor</h4>
+                        <p>Manage incoming parcels for hostels, update status, and notify students.</p>
+                    </div>
+                    <div class="role-card" data-role="postoffice" role="listitem">
+                        <div class="icon" style="background:rgba(245,158,11,0.06);color:#f59e0b">📮</div>
+                        <h4>Post Office Supervisor</h4>
+                        <p>Log received mail, update dispatch status and coordinate deliveries.</p>
+                    </div>
+                    <div class="role-card" data-role="admin" role="listitem">
+                        <div class="icon" style="background:rgba(139,92,246,0.06);color:#8b5cf6">🛠️</div>
+                        <h4>Admin</h4>
+                        <p>Manage users, supervisors, and system settings with full access.</p>
+                    </div>
+                </div>
+
+                <!-- Info box (hidden by default) -->
+                <div id="roleInfoBox" class="fixed inset-0 flex items-center justify-center p-4" style="display:none;z-index:60;">
+                    <div class="max-w-2xl w-full bg-white rounded-xl shadow-2xl p-6 relative">
+                        <button id="roleInfoClose" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800">✕</button>
+                        <h3 id="roleInfoTitle" class="text-xl font-semibold text-gray-800 mb-2"></h3>
+                        <p id="roleInfoText" class="text-gray-600 mb-4"></p>
+                        <div id="roleInfoActions" class="flex gap-3"></div>
+                        <div id="roleInfoPreview" class="mt-4"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const STATIC_IMAGES = {
+            box: "{% static 'images/box.avif' %}",
+            bvlogo: "{% static 'images/bvlogo.jpg' %}",
+            del: "{% static 'images/del.avif' %}",
+            parcel: "{% static 'images/parcel.avif' %}",
+            post: "{% static 'images/post.avif' %}" 
+        };
+    </script>
+    
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!--<script src="{% static 'js/script.js' %}"></script>-->
+    <script>
+        // Role info content
+        const ROLE_CONTENT = {
+            student: {
+                title: 'Student',
+                text: 'Students can track parcels, view pickup locations, and receive notifications when parcels arrive. Use your student ID to log in and view your parcel history.',
+                actions: [{label: 'Proceed as Student'}, {label: 'Sign up'}]
+            },
+            kutir: {
+                title: 'Kutir Supervisor',
+                text: 'Kutir supervisors manage incoming parcels for hostels, mark parcels as ready for pickup, and notify students. Use supervisor credentials to access management tools.',
+                actions: [{label: 'Proceed as Kutir Supervisor'}]
+            },
+            postoffice: {
+                title: 'Post Office Supervisor',
+                text: 'Post Office supervisors log received postal items, update parcel statuses, and coordinate dispatch to Kutir/hostels.',
+                actions: [{label: 'Proceed as Post Office Supervisor'}]
+            },
+            admin: {
+                title: 'Admin',
+                text: 'Admins can manage users, supervisors, and system settings. Admins have full access to reports, logs, and role assignments.',
+                actions: [{label: 'Proceed as Admin'}]
+            }
+        };
+
+        function openRoleInfo(roleKey){
+            const box = document.getElementById('roleInfoBox');
+            const title = document.getElementById('roleInfoTitle');
+            const text = document.getElementById('roleInfoText');
+            const actions = document.getElementById('roleInfoActions');
+            const data = ROLE_CONTENT[roleKey];
+            if(!data) return;
+            // scroll page to top so modal is fully visible
+            try{ window.scrollTo({ top: 0, behavior: 'smooth' }); }catch(e){ window.scrollTo(0,0); }
+            title.textContent = data.title;
+            text.textContent = data.text;
+            actions.innerHTML = '';
+            data.actions.forEach(a=>{
+                const b = document.createElement('button');
+                // role-specific primary styling
+                let btnClass = 'px-4 py-2 rounded-md text-white border-none cursor-pointer';
+                if(roleKey === 'student') btnClass += ' bg-gradient-to-r from-blue-600 to-blue-500';
+                else if(roleKey === 'kutir') btnClass += ' bg-gradient-to-r from-emerald-500 to-emerald-400';
+                else if(roleKey === 'postoffice') btnClass += ' bg-gradient-to-r from-yellow-500 to-yellow-400';
+                else if(roleKey === 'admin') btnClass += ' bg-gradient-to-r from-purple-600 to-purple-500';
+                b.className = btnClass;
+                b.type = 'button';
+                b.textContent = a.label;
+                // prevent navigation: keep user on homepage; close modal on click
+                b.addEventListener('click', ()=>{
+                    document.getElementById('roleInfoBox').style.display = 'none';
+                });
+                actions.appendChild(b);
+            });
+
+            // scroll to top then preview area (role-specific)
+            try{ window.scrollTo({ top: 0, behavior: 'smooth' }); }catch(e){ window.scrollTo(0,0); }
+            
+            // preview area (role-specific)
+            const preview = document.getElementById('roleInfoPreview');
+            preview.innerHTML = '';
+            if(roleKey === 'student'){
+                preview.innerHTML = `
+                    <div style="border:1px solid #eef2ff;padding:12px;border-radius:10px;background:#fbfeff">
+                        <strong style="display:block;margin-bottom:6px;color:#0f172a">Student Preview</strong>
+                        <p style="margin:0 0 8px;color:#475569">Quick actions available after login:</p>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="button" style="padding:8px 10px;border-radius:8px;background:#e6f0ff;color:#1e3a8a;border:none;cursor:pointer">Track Parcel</button>
+                            <button type="button" style="padding:8px 10px;border-radius:8px;background:#e6fff2;color:#065f46;border:none;cursor:pointer">Parcel History</button>
+                            <button type="button" style="padding:8px 10px;border-radius:8px;background:#fff7ed;color:#92400e;border:none;cursor:pointer">Notifications</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                preview.innerHTML = '';
+            }
+
+            box.style.display = 'flex';
+        }
+
+        document.addEventListener('click', (e)=>{
+            const card = e.target.closest('.role-card');
+            if(card){
+                const role = card.dataset.role;
+                openRoleInfo(role);
+            }
+            if(e.target.id === 'roleInfoClose' || e.target.id === 'roleInfoBox'){
+                document.getElementById('roleInfoBox').style.display = 'none';
+            }
+        });
+    </script>
+    <footer class="bg-black text-gray-300 mt-10">
+        <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+            
+            <!-- Left Section -->
+            <div>
+                <h2 class="text-white text-xl font-bold mb-4">BV ParcelPing</h2>
+                <p class="text-gray-400 leading-relaxed">
+                    Smart parcel management system for Banasthali Vidyapith campus.
+                    Efficient, secure and reliable.
+                </p>
+            </div>
+    
+            <!-- Quick Links -->
+            <div>
+                <h2 class="text-white text-xl font-bold mb-4">Quick Links</h2>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'student_info' %}" class="hover:text-white transition">Student</a></li>
+                    <li><a href="{% url 'kutir_info' %}" class="hover:text-white transition">Kutir</a></li>
+                    <li><a href="{% url 'postoffice_info' %}" class="hover:text-white transition">Post Office</a></li>
+                    <li><a href="{% url 'about' %}" class="hover:text-white transition">About</a></li>
+                    <li><a href="{% url 'faq' %}" class="hover:text-white transition">FAQ</a></li>
+                    <li><a href="{% url 'contact' %}" class="hover:text-white transition">Contact Us</a></li>
+                </ul>
+            </div>
+    
+            <!-- Contact Section -->
+            <div>
+                <h2 class="text-white text-xl font-bold mb-4">Contact / Support</h2>
+                <p class="text-gray-400">
+                    For any issues, contact Kutir Helpdesk or Post Office at campus.<br><br>
+                    Banasthali Vidyapith<br>
+                    Rajasthan, India
+                </p>
+                <p class="mt-4 text-gray-400">
+                    Email: helpdesk@banasthali.in<br>
+                    Phone: +91-12345-67890
+                </p>
+            </div>
+        </div>
+    
+        <!-- Bottom Copyright -->
+        <div class="border-t border-gray-800 text-center py-4 text-gray-500 text-sm">
+            © 2026 BV ParcelPing. All rights reserved.
+        </div>
+    </footer>
+</body>
+</html>
+            

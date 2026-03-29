@@ -1,0 +1,95 @@
+/* General Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+}
+
+.dashboard-card {
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    transform: scale(1.03);
+}
+
+/* Tab Button Styles */
+.tab-btn {
+    transition: background 0.2s, color 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background: #2563eb;
+    color: #fff;
+}
+
+/* Animations */
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 2s infinite;
+}
+
+/* Form Styling */
+input[type="text"],
+input[type="date"],
+input[type="tel"],
+select {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Status Badge Styling */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+}
+
+.status-delivered {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-pending {
+    background-color: #fef08a;
+    color: #854d0e;
+}
+
+/* Table Styling */
+table {
+    border-collapse: collapse;
+}
+
+tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Notification Styling */
+.notification-item {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.notification-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,89 @@
+/* General Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+}
+
+.dashboard-card {
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    transform: scale(1.03);
+}
+
+/* Tab Button Styles */
+.tab-btn {
+    transition: background 0.2s, color 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background: #047857;
+    color: #fff;
+}
+
+/* Form Input Styling */
+input[type="text"],
+input[type="date"],
+input[type="tel"],
+select {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Result Message Styling */
+.result-success {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.result-error {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+/* Button Hover Effects */
+button:hover {
+    transition: background-color 0.2s ease;
+}
+
+button.bg-green-600:hover {
+    background-color: #059669;
+}
+
+button.bg-yellow-600:hover {
+    background-color: #ca8a04;
+}
+
+/* Notification Dot */
+.notification-dot {
+    width: 10px;
+    height: 10px;
+    background: #ef4444;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 4px;
+    animation: pulse 2s infinite;
+}
+
+/* Notification Pulse Animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}

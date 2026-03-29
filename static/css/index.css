@@ -1,0 +1,122 @@
+/* General Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+}
+
+/* Login Card Styling */
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.login-card:focus-within,
+.login-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); 
+    transform: scale(1.03);
+}
+
+/* Role Tab Styling */
+.role-tab {
+    transition: background 0.2s, color 0.2s;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.role-tab.active,
+.role-tab[aria-selected="true"] {
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-weight: bold;
+}
+
+.role-tab:hover {
+    opacity: 0.8;
+}
+
+/* Form Input Styling */
+input[type="text"],
+input[type="password"],
+input[type="hidden"] {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    border-color: #3b82f6;
+    outline: none;
+}
+
+/* Error Message Animation */
+@keyframes shake {
+    10%, 90% {
+        transform: translateX(-1px);
+    }
+    20%, 80% {
+        transform: translateX(2px);
+    }
+    30%, 50%, 70% {
+        transform: translateX(-4px);
+    }
+    40%, 60% {
+        transform: translateX(4px);
+    }
+}
+
+.animate-shake {
+    animation: shake 0.4s;
+}
+
+/* Logo Animation */
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 2s infinite;
+}
+
+/* Button Styling */
+button[type="submit"] {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #1d4ed8;
+    transform: scale(1.05);
+}
+
+button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+/* Back to Home Button */
+.back-btn:hover {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+/* Link Styling */
+a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Forgot Password Link */
+a.text-blue-600:hover {
+    color: #0369a1;
+}

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information - BV ParcelPing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">Student Information</h1>
+        <div class="text-gray-700 text-lg leading-relaxed">
+            <p class="mb-4">
+                Students are the primary users of the BV ParcelPing system. 
+                Their role is to receive real-time updates about their parcels that arrive at either the Post Office or Kutir. <br>Once a parcel is scanned, the student gets notified with the parcel status, arrival location, and expected delivery date. Students can log in to view all their incoming and past parcels, check whether a parcel is out for delivery or has reached their hostel, and confirm receipt once delivered.<br> The system helps them avoid standing in lines or repeatedly visiting Kutir or the Post Office to ask about their parcels, making the entire process more convenient and transparent.
+            </p>
+        </div>
+        <div class="text-center mt-8">
+            <a href="{% url 'homepage' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>
