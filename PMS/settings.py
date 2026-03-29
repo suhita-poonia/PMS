@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dn$8mcu)3h(!$5c0v(#g6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['PMS.onrender.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -162,7 +162,7 @@ SESSION_COOKIE_NAME = 'sessionid'  # default, keep as is
 ADMIN_SITE_HEADER = "Parcel Management System Admin"
 
 # Fix CSRF for local development
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://PMS.onrender.com']
 
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
